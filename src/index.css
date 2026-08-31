@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html.light {
+  color-scheme: light;
+}
+
+body {
+  background: radial-gradient(ellipse at top, #0b1220 0%, #05070c 60%);
+}
+
+html.light body {
+  background: #f4f6fb;
+}
+
+/* Glass panel base, layered on top of the dark/light background */
+.glass-panel {
+  @apply relative rounded-2xl border border-white/[0.06] bg-navy-800/60 backdrop-blur-xl;
+}
+html.light .glass-panel {
+  @apply border-navy-100 bg-white/80;
+}
+
+.glass-panel-hover {
+  @apply transition-colors duration-200 hover:border-command-cyan/30;
+}
+
+/* Thin scrollbars that fit the console aesthetic */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 999px;
+}
+
+/* Subtle scanning-grid backdrop for the app shell */
+.command-grid-bg {
+  background-image: linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+html.light .command-grid-bg {
+  background-image: linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+}
+
+.status-dot {
+  box-shadow: 0 0 0 3px rgba(51, 214, 159, 0.15);
+}
