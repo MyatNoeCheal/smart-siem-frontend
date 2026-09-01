@@ -1,30 +1,22 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, ShieldAlert } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import PageHeader from "../components/ui/PageHeader";
 import GlassPanel from "../components/ui/GlassPanel";
-import StatusBadge from "../components/ui/StatusBadge";
 import AsyncState from "../components/ui/AsyncState";
-import { getThreats } from "../services/threatService";
+import AttackPathScene from "../components/investigation/AttackPathScene";
+import ThreatSummaryHeader from "../components/investigation/ThreatSummaryHeader";
+import ThreatDetailsPanel from "../components/investigation/ThreatDetailsPanel";
+import ThreatTimeline from "../components/investigation/ThreatTimeline";
+import InvestigationActions from "../components/investigation/InvestigationActions";
+import { useThreatInvestigation } from "../hooks/useThreatInvestigation";
+import { severityToChainDepth } from "../data/threatInvestigationMock";
 
 export default function ThreatInvestigation() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [state, setState] = useState({ threat: null, loading: true, error: null });
-
-  useEffect(() => {
-    let mounted = true;
-    getThreats({ limit: 200, group_incidents: true }).then((res) => {
-      if (!mounted) return;
-      const match = res.data.items.find((t) => t.id === id);
-      setState({
-        threat: match || null,
-        loading: false,
-        error: match ? null : "Threat not found in the current window — it may have been resolved or aged out.",
-      });
-    });
-    return () => { mounted = false; };
-  }, [id]);
+  const { threat, timeline, timelineSource, loading, error, investigationStatus, applyAction, retry } = useThreatInvestigation(id);
+  const [selectedNode, setSelectedNode] = useState(null);
 
   return (
     <div>
@@ -38,61 +30,47 @@ export default function ThreatInvestigation() {
         }
       />
 
-      <AsyncState
-        loading={state.loading}
-        error={state.error}
-        isEmpty={!state.loading && !state.threat}
-        onRetry={() => window.location.reload()}
-        emptyLabel={state.error}
-      >
-        {state.threat && (
-          <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-            <GlassPanel className="lg:col-span-2">
-              <div className="mb-4 flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-risk-critical/10 ring-1 ring-risk-critical/25">
-                  <ShieldAlert className="h-5 w-5 text-risk-critical" />
-                </span>
-                <div>
-                  <p className="font-display text-[16px] font-semibold capitalize text-navy-50">{state.threat.type}</p>
-                  <StatusBadge level={state.threat.severity} />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                {[
-                  ["Source IP", state.threat.ip],
-                  ["Risk Score", state.threat.riskScore ?? "—"],
-                  ["Priority Score", state.threat.priorityScore ?? "—"],
-                  ["Status", state.threat.status ?? "—"],
-                  ["Occurrences", state.threat.count],
-                  ["Last Seen", state.threat.lastSeen ?? "—"],
-                ].map(([label, value]) => (
-                  <div key={label}>
-                    <p className="font-mono text-[9.5px] uppercase tracking-wider text-navy-500">{label}</p>
-                    <p className="mt-0.5 font-mono text-[13px] text-navy-50">{String(value)}</p>
-                  </div>
-                ))}
-              </div>
-              {state.threat.reason?.length > 0 && (
-                <div className="mt-5 border-t border-white/[0.06] pt-4">
-                  <p className="mb-2 font-mono text-[9.5px] uppercase tracking-wider text-navy-500">Detection Reasons</p>
-                  <ul className="space-y-1">
-                    {state.threat.reason.map((r, i) => (
-                      <li key={i} className="text-[12.5px] text-navy-100/80">— {r}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+      <AsyncState loading={loading} error={error} isEmpty={!loading && !threat} onRetry={retry} emptyLabel={error || "Threat not found."}>
+        {threat && (
+          <>
+            <GlassPanel className="mb-5">
+              <ThreatSummaryHeader threat={threat} investigationStatus={investigationStatus} />
             </GlassPanel>
 
-            <GlassPanel>
-              <p className="mb-2 font-display text-[13px] font-semibold text-navy-50">Next Steps</p>
-              <p className="text-[12px] leading-relaxed text-navy-400">
-                Case management, MITRE mapping, and threat-intel enrichment for this alert are available via your
-                backend's <code className="rounded bg-navy-800 px-1">/cases</code> and <code className="rounded bg-navy-800 px-1">/threats</code>{" "}
-                endpoints — wiring this panel to them is a good next build step.
-              </p>
-            </GlassPanel>
-          </div>
+            <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
+              <GlassPanel className="overflow-hidden xl:col-span-2">
+                <div className="mb-2 flex items-center justify-between">
+                  <h2 className="font-display text-[14px] font-semibold text-navy-50">Attack Path</h2>
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-navy-400">
+                    {selectedNode ? `selected: ${selectedNode}` : "click a node for detail"}
+                  </span>
+                </div>
+                <AttackPathScene
+                  depth={severityToChainDepth(threat.severity)}
+                  investigationStatus={investigationStatus}
+                  onSelectNode={setSelectedNode}
+                  selectedNode={selectedNode}
+                />
+              </GlassPanel>
+
+              <GlassPanel>
+                <h2 className="mb-3 font-display text-[14px] font-semibold text-navy-50">Threat Details</h2>
+                <ThreatDetailsPanel threat={threat} />
+              </GlassPanel>
+            </div>
+
+            <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-3">
+              <GlassPanel className="xl:col-span-2">
+                <h2 className="mb-1 font-display text-[14px] font-semibold text-navy-50">Threat Timeline</h2>
+                <ThreatTimeline events={timeline} source={timelineSource} />
+              </GlassPanel>
+
+              <GlassPanel>
+                <h2 className="mb-3 font-display text-[14px] font-semibold text-navy-50">Actions</h2>
+                <InvestigationActions currentStatus={investigationStatus} onAction={applyAction} />
+              </GlassPanel>
+            </div>
+          </>
         )}
       </AsyncState>
     </div>

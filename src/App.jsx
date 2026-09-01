@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AppShell from "./layouts/AppShell";
 import Overview from "./pages/Overview";
 import ThreatInvestigation from "./pages/ThreatInvestigation";
+import FraudDetection from "./pages/FraudDetection";
+import UserBehavior from "./pages/UserBehavior";
 import AIAssistant from "./pages/AIAssistant";
 import PlaceholderPage from "./pages/PlaceholderPage";
 import ApiDiagnostics from "./pages/dev/ApiDiagnostics";
@@ -18,14 +20,8 @@ export default function App() {
             element={<PlaceholderPage title="Threats" subtitle="Correlated threat & incident queue" />}
           />
           <Route path="threats/:id" element={<ThreatInvestigation />} />
-          <Route
-            path="fraud-detection"
-            element={<PlaceholderPage title="Fraud Detection" subtitle="Transaction & payment anomaly monitoring" />}
-          />
-          <Route
-            path="user-behavior"
-            element={<PlaceholderPage title="User Behavior" subtitle="UEBA — customer & account activity" />}
-          />
+          <Route path="fraud-detection" element={<FraudDetection />} />
+          <Route path="user-behavior" element={<UserBehavior />} />
           <Route
             path="admin-activity"
             element={<PlaceholderPage title="Admin Activity" subtitle="Internal & insider misuse monitoring" />}
