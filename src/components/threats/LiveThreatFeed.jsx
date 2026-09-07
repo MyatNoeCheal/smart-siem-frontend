@@ -43,23 +43,32 @@ export default function LiveThreatFeed({ extraItems = [] }) {
 
   return (
     <div className="max-h-[420px] space-y-1 overflow-y-auto pr-1">
-      {combined.map((t) => (
-        <button
-          key={t.id}
-          onClick={() => navigate(`/threats/${t.id}`)}
-          className="flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-white/[0.04]"
-        >
-          <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${dotColor[t.severity] || dotColor.low}`} />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-[12px] text-navy-50">{t.type}</p>
-            <p className="truncate font-mono text-[10px] text-navy-500">{t.ip} · risk {t.riskScore ?? "—"}</p>
-          </div>
-          <div className="flex shrink-0 flex-col items-end gap-1">
-            <StatusBadge level={t.severity} />
-            <span className="font-mono text-[9.5px] text-navy-500">{formatTime(t.lastSeen)}</span>
-          </div>
-        </button>
-      ))}
+      {combined.map((t) => {
+        const isSim = t.id.startsWith("sim-");
+        return (
+          <button
+            key={t.id}
+            onClick={() => { if (!isSim) navigate(`/threats/${t.id}`); }}
+            disabled={isSim}
+            title={isSim ? "Simulated demo alert — not stored in the database, nothing to investigate" : undefined}
+            className={`flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors ${
+              isSim ? "cursor-default opacity-90" : "hover:bg-white/[0.04]"
+            }`}
+          >
+            <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${dotColor[t.severity] || dotColor.low}`} />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[12px] text-navy-50">
+                {t.type} {isSim && <span className="ml-1 font-mono text-[9px] uppercase tracking-wider text-navy-500">simulated</span>}
+              </p>
+              <p className="truncate font-mono text-[10px] text-navy-500">{t.ip} · risk {t.riskScore ?? "—"}</p>
+            </div>
+            <div className="flex shrink-0 flex-col items-end gap-1">
+              <StatusBadge level={t.severity} />
+              <span className="font-mono text-[9.5px] text-navy-500">{formatTime(t.lastSeen)}</span>
+            </div>
+          </button>
+        );
+      })}
     </div>
   );
 }

@@ -34,7 +34,7 @@ export default function TransactionTable({ transactions, onSelect, selectedId })
             >
               <td className="py-2 pr-4 font-mono text-cyan-400">{t.id}</td>
               <td className="py-2 pr-4 text-slate-300">{t.user}</td>
-              <td className="py-2 pr-4 text-slate-300">${t.amount.toLocaleString()}</td>
+             <td className="py-2 pr-4 text-slate-300">{t.amount != null ? `$${t.amount.toLocaleString()}` : '—'}</td>
               <td className="py-2 pr-4 text-slate-500 text-xs">{new Date(t.timestamp).toLocaleString()}</td>
               <td className="py-2 pr-4">
                 <RiskBadge score={t.risk_score} />

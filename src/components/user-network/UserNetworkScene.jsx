@@ -25,7 +25,7 @@ export default function UserNetworkScene({ nodes, edges, visibleNodeIds, onSelec
   const handleSelect = useCallback((node) => onSelectUser((prev) => (prev === node.id ? null : node.id)), [onSelectUser]);
 
   return (
-    <div className="relative w-full" style={{ height }}>
+    <div className="viz-dark-surface relative w-full" style={{ height }}>
       <Canvas camera={{ position: [10, 5, 13], fov: 48 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true }}>
         <ambientLight intensity={0.55} />
         <pointLight position={[8, 8, 8]} intensity={0.4} />

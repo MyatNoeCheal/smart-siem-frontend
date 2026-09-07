@@ -4,56 +4,144 @@
 
 :root {
   color-scheme: dark;
+
+  --navy-50: 238 242 248;
+  --navy-100: 216 224 238;
+  --navy-400: 139 150 172;
+  --navy-500: 93 97 115;
+  --navy-600: 33 44 68;
+  --navy-700: 22 31 53;
+  --navy-800: 11 18 32;
+  --navy-900: 7 11 20;
+  --navy-950: 5 7 12;
+
+  --hairline-rgb: 255 255 255;
+  --overlay-rgb: 0 0 0;
 }
 
 html.light {
   color-scheme: light;
+
+  --navy-50: 15 23 42;      /* darkest text */
+  --navy-100: 30 41 59;
+  --navy-400: 71 85 105;    /* muted text, still clearly readable */
+  --navy-500: 100 116 139;
+  --navy-600: 203 213 225;
+  --navy-700: 226 232 240;
+  --navy-800: 255 255 255;  /* panel bg -- true white, distinct from page */
+  --navy-900: 255 255 255;  /* sidebar / topbar bg */
+  --navy-950: 241 245 249;  /* page bg -- soft slate, NOT pure white */
+
+  --hairline-rgb: 15 23 42;
+  --overlay-rgb: 15 23 42;
 }
 
 body {
-  background: radial-gradient(ellipse at top, #0b1220 0%, #05070c 60%);
+  background: radial-gradient(ellipse at top, rgb(var(--navy-900)) 0%, rgb(var(--navy-950)) 60%);
+  color: rgb(var(--navy-50));
 }
-
 html.light body {
-  background: #f4f6fb;
+  background: rgb(var(--navy-950));
 }
 
-/* Glass panel base, layered on top of the dark/light background */
 .glass-panel {
-  @apply relative rounded-2xl border border-white/[0.06] bg-navy-800/60 backdrop-blur-xl;
+  @apply relative rounded-2xl backdrop-blur-xl;
+  border: 1px solid rgb(var(--hairline-rgb) / 0.08);
+  background: rgb(var(--navy-800) / 0.85);
 }
 html.light .glass-panel {
-  @apply border-navy-100 bg-white/80;
+  border: 1px solid rgb(15 23 42 / 0.10);
+  background: #FFFFFF;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.05), 0 1px 8px rgb(15 23 42 / 0.04);
 }
 
 .glass-panel-hover {
   @apply transition-colors duration-200 hover:border-command-cyan/30;
 }
 
-/* Thin scrollbars that fit the console aesthetic */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.25);
-  border-radius: 999px;
-}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgb(148 163 184 / 0.25); border-radius: 999px; }
 
-/* Subtle scanning-grid backdrop for the app shell */
 .command-grid-bg {
-  background-image: linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+  background-image: linear-gradient(rgb(var(--hairline-rgb) / 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--hairline-rgb) / 0.04) 1px, transparent 1px);
   background-size: 42px 42px;
 }
 html.light .command-grid-bg {
-  background-image: linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+  background-image: linear-gradient(rgb(15 23 42 / 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(15 23 42 / 0.025) 1px, transparent 1px);
 }
 
-.status-dot {
-  box-shadow: 0 0 0 3px rgba(51, 214, 159, 0.15);
+.status-dot { box-shadow: 0 0 0 3px rgba(51, 214, 159, 0.15); }
+
+/* ============================================================
+   LIGHT-MODE HAIRLINE OVERRIDES — flat selectors only (no nesting)
+   so there's no ambiguity about browser/build support. Covers the
+   raw white/[x] classes used throughout the app for borders and
+   subtle backgrounds, which don't route through the navy variables.
+   ============================================================ */
+html.light .border-white\/\[0\.03\] { border-color: rgb(15 23 42 / 0.08) !important; }
+html.light .border-white\/\[0\.04\] { border-color: rgb(15 23 42 / 0.08) !important; }
+html.light .border-white\/\[0\.05\] { border-color: rgb(15 23 42 / 0.10) !important; }
+html.light .border-white\/\[0\.06\] { border-color: rgb(15 23 42 / 0.10) !important; }
+html.light .border-white\/\[0\.08\] { border-color: rgb(15 23 42 / 0.14) !important; }
+html.light .border-white\/10 { border-color: rgb(15 23 42 / 0.14) !important; }
+
+html.light .bg-white\/\[0\.03\] { background-color: rgb(15 23 42 / 0.03) !important; }
+html.light .bg-white\/\[0\.04\] { background-color: rgb(15 23 42 / 0.04) !important; }
+html.light .bg-white\/\[0\.05\] { background-color: rgb(15 23 42 / 0.05) !important; }
+html.light .bg-white\/\[0\.06\] { background-color: rgb(15 23 42 / 0.06) !important; }
+html.light .bg-white\/\[0\.08\] { background-color: rgb(15 23 42 / 0.07) !important; }
+html.light .bg-white\/\[0\.10\] { background-color: rgb(15 23 42 / 0.08) !important; }
+
+html.light .hover\:bg-white\/\[0\.03\]:hover { background-color: rgb(15 23 42 / 0.05) !important; }
+html.light .hover\:bg-white\/\[0\.04\]:hover { background-color: rgb(15 23 42 / 0.05) !important; }
+html.light .hover\:bg-white\/\[0\.05\]:hover { background-color: rgb(15 23 42 / 0.06) !important; }
+html.light .hover\:bg-white\/\[0\.06\]:hover { background-color: rgb(15 23 42 / 0.06) !important; }
+
+html.light .divide-white\/\[0\.04\] > :not([hidden]) ~ :not([hidden]) { border-color: rgb(15 23 42 / 0.08) !important; }
+html.light .divide-white\/\[0\.05\] > :not([hidden]) ~ :not([hidden]) { border-color: rgb(15 23 42 / 0.08) !important; }
+
+html.light .bg-black\/50 { background-color: rgb(15 23 42 / 0.30) !important; }
+html.light .bg-black\/60 { background-color: rgb(15 23 42 / 0.35) !important; }
+
+/* "Inner" panel blocks used inside cards (model metrics, gauges, etc.)
+   that use bg-navy-900/40 or bg-navy-950/40 for a slightly-recessed look */
+html.light .bg-navy-900\/40 { background-color: rgb(241 245 249 / 0.8) !important; }
+html.light .bg-navy-950\/40 { background-color: rgb(241 245 249 / 0.8) !important; }
+
+/* ============================================================
+   3D VISUALIZATION SURFACES — Threat Network, Attack Path, User
+   Relationship Network. Framed distinctly from surrounding glass
+   panels (cyan hairline + glow) so they read as an instrument/
+   viewport rather than an unstyled block, in both themes.
+   ============================================================ */
+.viz-dark-surface {
+  position: relative;
+  background: radial-gradient(ellipse at top, #0B1220 0%, #05070C 100%);
+  background-image:
+    radial-gradient(ellipse at top, #0B1220 0%, #05070C 100%),
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: auto, 32px 32px, 32px 32px;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(34, 211, 238, 0.18);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+    0 0 24px -6px rgba(34, 211, 238, 0.15),
+    0 10px 28px -12px rgba(0, 0, 0, 0.45);
+}
+html.light .viz-dark-surface {
+  background: #FFFFFF;
+  background-image:
+    linear-gradient(rgba(15,23,42,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15,23,42,0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+  border: 1px solid rgba(34, 211, 238, 0.25);
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 23, 42, 0.03),
+    0 0 20px -8px rgba(34, 211, 238, 0.25),
+    0 8px 24px -12px rgba(15, 23, 42, 0.12);
 }

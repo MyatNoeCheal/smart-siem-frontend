@@ -10,6 +10,7 @@ export function transformAdminActivity(raw) {
       severity: (r.risk_level || r.severity || "low").toLowerCase(),
       mitre: r.mitre || null,
       threatIntel: r.threat_intel || null,
+      raw: r,
     })),
   };
 }

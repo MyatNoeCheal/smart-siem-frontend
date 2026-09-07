@@ -15,6 +15,12 @@ export function AuthProvider({ children }) {
   });
   const [checking, setChecking] = useState(true);
 
+  const logout = useCallback(() => {
+    setAuthToken(null);
+    localStorage.removeItem(USER_STORAGE_KEY);
+    setUser(null);
+  }, []);
+
   // On first load, if a token exists, confirm it's still valid via /auth/me
   // rather than trusting a possibly-expired token blindly.
   useEffect(() => {
@@ -30,8 +36,7 @@ export function AuthProvider({ children }) {
         logout();
         setChecking(false);
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [logout]);
 
   const login = useCallback(async (username, password) => {
     const res = await api.post("/auth/login", { username, password });
@@ -39,12 +44,6 @@ export function AuthProvider({ children }) {
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(res.data.user));
     setUser(res.data.user);
     return res.data.user;
-  }, []);
-
-  const logout = useCallback(() => {
-    setAuthToken(null);
-    localStorage.removeItem(USER_STORAGE_KEY);
-    setUser(null);
   }, []);
 
   return (

@@ -22,7 +22,7 @@ export default function Login() {
       await login(username, password);
       navigate(redirectTo, { replace: true });
     } catch (err) {
-      setError(err.status === 401 ? "Invalid username or password." : err.message);
+      setError(err.status === 401 ? "Invalid username or password." : err.message || "Could not reach the backend.");
     } finally {
       setSubmitting(false);
     }

@@ -87,7 +87,7 @@ export default function ThreatNetwork({
   const handleSelect = useCallback((node) => setSelectedNode((prev) => (prev?.id === node.id ? null : node)), []);
 
   return (
-    <div className="relative w-full" style={{ height }}>
+    <div className="viz-dark-surface relative w-full" style={{ height }}>
       <Canvas
         camera={{ position: [11, 6, 15], fov: 48 }}
         dpr={[1, 1.5]}

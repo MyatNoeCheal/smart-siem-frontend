@@ -87,7 +87,7 @@ export default function AttackPathScene({ depth, investigationStatus, onSelectNo
   );
 
   return (
-    <div style={{ height }} className="w-full">
+    <div style={{ height }} className="viz-dark-surface w-full">
       <Canvas camera={{ position: [5, 1.5, 6], fov: 45 }} dpr={[1, 1.5]} gl={{ antialias: true, alpha: true }}>
         <ambientLight intensity={0.6} />
         <pointLight position={[6, 6, 6]} intensity={0.4} />
