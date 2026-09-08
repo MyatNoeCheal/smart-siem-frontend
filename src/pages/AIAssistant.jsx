@@ -6,6 +6,7 @@ import {
   CornerDownLeft,
   Loader2,
   Radar,
+  RotateCcw,
   ShieldCheck,
   Sparkles,
   TerminalSquare,
@@ -16,6 +17,7 @@ import PageHeader from "../components/ui/PageHeader";
 import GlassPanel from "../components/ui/GlassPanel";
 import StatusBadge from "../components/ui/StatusBadge";
 import { sendAssistantMessage } from "../api/client";
+import { useAssistantChat } from "../context/AssistantChatContext";
 
 const QUICK_PROMPTS = [
   "Brief me on the most urgent threat in the SIEM right now.",
@@ -23,9 +25,6 @@ const QUICK_PROMPTS = [
   "Draft a 5-step investigation plan for the latest anomaly.",
   "What should I verify before marking alerts as false positive?",
 ];
-
-const STARTER_REPLY =
-  "Online. I can read SIEM posture, alerts, logs, entity risk, and predictive risk. Ask me for a threat brief, correlation, case notes, or an investigation plan.";
 
 function AssistantBubble({ message }) {
   const isUser = message.role === "user";
@@ -62,12 +61,9 @@ function SignalTile({ icon: Icon, label, value, tone = "text-navy-50" }) {
 }
 
 export default function AIAssistant() {
-  const [messages, setMessages] = useState([
-    { role: "assistant", content: STARTER_REPLY },
-  ]);
+  const { messages, setMessages, lastResult, setLastResult, resetChat } = useAssistantChat();
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [lastResult, setLastResult] = useState(null);
   const [error, setError] = useState(null);
 
   const context = lastResult?.context;
@@ -102,7 +98,9 @@ export default function AIAssistant() {
       setMessages([...nextMessages, { role: "assistant", content: result.reply }]);
     } catch (err) {
       const detail =
-        err.response?.data?.detail ||
+        (err.isNetworkError &&
+          "Assistant backend is unreachable. Check that FastAPI is running at the configured API URL.") ||
+        err.message ||
         "Assistant backend is unreachable. Check FastAPI, JWT login, and /assistant/chat.";
       setError(detail);
       setMessages([
@@ -128,9 +126,19 @@ export default function AIAssistant() {
         title="AI Assistant"
         subtitle="OpenJarvis behavior layer powered by Qwen and live SIEM context"
         actions={
-          <StatusBadge level={provider === "qwen" ? "live" : "mock"}>
-            {providerLabel}
-          </StatusBadge>
+          <>
+            <StatusBadge level={provider === "qwen" ? "live" : "mock"}>
+              {providerLabel}
+            </StatusBadge>
+            <button
+              onClick={resetChat}
+              title="Clear conversation"
+              className="flex items-center gap-1.5 rounded-lg border border-white/[0.06] bg-navy-800/60 px-3 py-1.5 text-[12px] text-navy-100 hover:border-command-cyan/30"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              Clear
+            </button>
+          </>
         }
       />
 

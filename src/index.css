@@ -1,10 +1,18 @@
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   GLOBAL THEME VARIABLES
+   ============================================================ */
+
 :root {
   color-scheme: dark;
 
+  /* Existing SIEM theme */
   --navy-50: 238 242 248;
   --navy-100: 216 224 238;
   --navy-400: 139 150 172;
@@ -17,131 +25,936 @@
 
   --hairline-rgb: 255 255 255;
   --overlay-rgb: 0 0 0;
+
+  /* JARVIS theme */
+  --bg: #060911;
+  --panel: #0c1220;
+  --panel-2: #0f1626;
+  --border: #1c2740;
+
+  --text: #eef2fb;
+  --text-muted: #8792ad;
+  --text-dim: #4d5875;
+
+  --cyan: #6fe3ff;
+  --blue: #4f7cff;
+
+  --cyan-dim: rgba(111, 227, 255, 0.12);
+  --blue-dim: rgba(79, 124, 255, 0.14);
+
+  --green: #34d399;
+  --red: #f0465b;
+
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
 }
+
+/* ============================================================
+   LIGHT THEME
+   ============================================================ */
 
 html.light {
   color-scheme: light;
 
-  --navy-50: 15 23 42;      /* darkest text */
+  --navy-50: 15 23 42;
   --navy-100: 30 41 59;
-  --navy-400: 71 85 105;    /* muted text, still clearly readable */
+  --navy-400: 71 85 105;
   --navy-500: 100 116 139;
   --navy-600: 203 213 225;
   --navy-700: 226 232 240;
-  --navy-800: 255 255 255;  /* panel bg -- true white, distinct from page */
-  --navy-900: 255 255 255;  /* sidebar / topbar bg */
-  --navy-950: 241 245 249;  /* page bg -- soft slate, NOT pure white */
+  --navy-800: 255 255 255;
+  --navy-900: 255 255 255;
+  --navy-950: 241 245 249;
 
   --hairline-rgb: 15 23 42;
   --overlay-rgb: 15 23 42;
+
+  /* JARVIS light mode */
+  --bg: #f1f5f9;
+  --panel: #ffffff;
+  --panel-2: #f8fafc;
+  --border: #cbd5e1;
+
+  --text: #0f172a;
+  --text-muted: #475569;
+  --text-dim: #64748b;
+
+  --cyan: #0891b2;
+  --blue: #4f7cff;
+
+  --cyan-dim: rgba(8, 145, 178, 0.08);
+  --blue-dim: rgba(79, 124, 255, 0.10);
+
+  --green: #059669;
+  --red: #dc2626;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
 }
 
 body {
-  background: radial-gradient(ellipse at top, rgb(var(--navy-900)) 0%, rgb(var(--navy-950)) 60%);
-  color: rgb(var(--navy-50));
+  background:
+    radial-gradient(
+      ellipse at top,
+      rgb(var(--navy-900)) 0%,
+      rgb(var(--navy-950)) 60%
+    );
+
+  color: var(--text);
+  font-family: var(--font-sans);
 }
+
 html.light body {
   background: rgb(var(--navy-950));
 }
 
+#root {
+  min-height: 100vh;
+}
+
+/* ============================================================
+   GLASS PANELS
+   ============================================================ */
+
 .glass-panel {
   @apply relative rounded-2xl backdrop-blur-xl;
+
   border: 1px solid rgb(var(--hairline-rgb) / 0.08);
   background: rgb(var(--navy-800) / 0.85);
 }
+
 html.light .glass-panel {
   border: 1px solid rgb(15 23 42 / 0.10);
-  background: #FFFFFF;
-  box-shadow: 0 1px 2px rgb(15 23 42 / 0.05), 0 1px 8px rgb(15 23 42 / 0.04);
+  background: #ffffff;
+
+  box-shadow:
+    0 1px 2px rgb(15 23 42 / 0.05),
+    0 1px 8px rgb(15 23 42 / 0.04);
 }
 
 .glass-panel-hover {
   @apply transition-colors duration-200 hover:border-command-cyan/30;
 }
 
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgb(148 163 184 / 0.25); border-radius: 999px; }
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(148 163 184 / 0.25);
+  border-radius: 999px;
+}
+
+/* ============================================================
+   COMMAND GRID
+   ============================================================ */
 
 .command-grid-bg {
-  background-image: linear-gradient(rgb(var(--hairline-rgb) / 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(var(--hairline-rgb) / 0.04) 1px, transparent 1px);
+  background-image:
+    linear-gradient(
+      rgb(var(--hairline-rgb) / 0.04) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgb(var(--hairline-rgb) / 0.04) 1px,
+      transparent 1px
+    );
+
   background-size: 42px 42px;
 }
+
 html.light .command-grid-bg {
-  background-image: linear-gradient(rgb(15 23 42 / 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(15 23 42 / 0.025) 1px, transparent 1px);
+  background-image:
+    linear-gradient(
+      rgb(15 23 42 / 0.025) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgb(15 23 42 / 0.025) 1px,
+      transparent 1px
+    );
 }
 
-.status-dot { box-shadow: 0 0 0 3px rgba(51, 214, 159, 0.15); }
+/* ============================================================
+   STATUS
+   ============================================================ */
+
+.status-dot {
+  box-shadow: 0 0 0 3px rgba(51, 214, 159, 0.15);
+}
 
 /* ============================================================
-   LIGHT-MODE HAIRLINE OVERRIDES — flat selectors only (no nesting)
-   so there's no ambiguity about browser/build support. Covers the
-   raw white/[x] classes used throughout the app for borders and
-   subtle backgrounds, which don't route through the navy variables.
+   LIGHT MODE HAIRLINE OVERRIDES
    ============================================================ */
-html.light .border-white\/\[0\.03\] { border-color: rgb(15 23 42 / 0.08) !important; }
-html.light .border-white\/\[0\.04\] { border-color: rgb(15 23 42 / 0.08) !important; }
-html.light .border-white\/\[0\.05\] { border-color: rgb(15 23 42 / 0.10) !important; }
-html.light .border-white\/\[0\.06\] { border-color: rgb(15 23 42 / 0.10) !important; }
-html.light .border-white\/\[0\.08\] { border-color: rgb(15 23 42 / 0.14) !important; }
-html.light .border-white\/10 { border-color: rgb(15 23 42 / 0.14) !important; }
 
-html.light .bg-white\/\[0\.03\] { background-color: rgb(15 23 42 / 0.03) !important; }
-html.light .bg-white\/\[0\.04\] { background-color: rgb(15 23 42 / 0.04) !important; }
-html.light .bg-white\/\[0\.05\] { background-color: rgb(15 23 42 / 0.05) !important; }
-html.light .bg-white\/\[0\.06\] { background-color: rgb(15 23 42 / 0.06) !important; }
-html.light .bg-white\/\[0\.08\] { background-color: rgb(15 23 42 / 0.07) !important; }
-html.light .bg-white\/\[0\.10\] { background-color: rgb(15 23 42 / 0.08) !important; }
+html.light .border-white\/\[0\.03\] {
+  border-color: rgb(15 23 42 / 0.08) !important;
+}
 
-html.light .hover\:bg-white\/\[0\.03\]:hover { background-color: rgb(15 23 42 / 0.05) !important; }
-html.light .hover\:bg-white\/\[0\.04\]:hover { background-color: rgb(15 23 42 / 0.05) !important; }
-html.light .hover\:bg-white\/\[0\.05\]:hover { background-color: rgb(15 23 42 / 0.06) !important; }
-html.light .hover\:bg-white\/\[0\.06\]:hover { background-color: rgb(15 23 42 / 0.06) !important; }
+html.light .border-white\/\[0\.04\] {
+  border-color: rgb(15 23 42 / 0.08) !important;
+}
 
-html.light .divide-white\/\[0\.04\] > :not([hidden]) ~ :not([hidden]) { border-color: rgb(15 23 42 / 0.08) !important; }
-html.light .divide-white\/\[0\.05\] > :not([hidden]) ~ :not([hidden]) { border-color: rgb(15 23 42 / 0.08) !important; }
+html.light .border-white\/\[0\.05\] {
+  border-color: rgb(15 23 42 / 0.10) !important;
+}
 
-html.light .bg-black\/50 { background-color: rgb(15 23 42 / 0.30) !important; }
-html.light .bg-black\/60 { background-color: rgb(15 23 42 / 0.35) !important; }
+html.light .border-white\/\[0\.06\] {
+  border-color: rgb(15 23 42 / 0.10) !important;
+}
 
-/* "Inner" panel blocks used inside cards (model metrics, gauges, etc.)
-   that use bg-navy-900/40 or bg-navy-950/40 for a slightly-recessed look */
-html.light .bg-navy-900\/40 { background-color: rgb(241 245 249 / 0.8) !important; }
-html.light .bg-navy-950\/40 { background-color: rgb(241 245 249 / 0.8) !important; }
+html.light .border-white\/\[0\.08\] {
+  border-color: rgb(15 23 42 / 0.14) !important;
+}
+
+html.light .border-white\/10 {
+  border-color: rgb(15 23 42 / 0.14) !important;
+}
+
+html.light .bg-white\/\[0\.03\] {
+  background-color: rgb(15 23 42 / 0.03) !important;
+}
+
+html.light .bg-white\/\[0\.04\] {
+  background-color: rgb(15 23 42 / 0.04) !important;
+}
+
+html.light .bg-white\/\[0\.05\] {
+  background-color: rgb(15 23 42 / 0.05) !important;
+}
+
+html.light .bg-white\/\[0\.06\] {
+  background-color: rgb(15 23 42 / 0.06) !important;
+}
+
+html.light .bg-white\/\[0\.08\] {
+  background-color: rgb(15 23 42 / 0.07) !important;
+}
+
+html.light .bg-white\/\[0\.10\] {
+  background-color: rgb(15 23 42 / 0.08) !important;
+}
+
+html.light .hover\:bg-white\/\[0\.03\]:hover {
+  background-color: rgb(15 23 42 / 0.05) !important;
+}
+
+html.light .hover\:bg-white\/\[0\.04\]:hover {
+  background-color: rgb(15 23 42 / 0.05) !important;
+}
+
+html.light .hover\:bg-white\/\[0\.05\]:hover {
+  background-color: rgb(15 23 42 / 0.06) !important;
+}
+
+html.light .hover\:bg-white\/\[0\.06\]:hover {
+  background-color: rgb(15 23 42 / 0.06) !important;
+}
+
+html.light
+.divide-white\/\[0\.04\]
+> :not([hidden]) ~ :not([hidden]) {
+  border-color: rgb(15 23 42 / 0.08) !important;
+}
+
+html.light
+.divide-white\/\[0\.05\]
+> :not([hidden]) ~ :not([hidden]) {
+  border-color: rgb(15 23 42 / 0.08) !important;
+}
+
+html.light .bg-black\/50 {
+  background-color: rgb(15 23 42 / 0.30) !important;
+}
+
+html.light .bg-black\/60 {
+  background-color: rgb(15 23 42 / 0.35) !important;
+}
+
+html.light .bg-navy-900\/40 {
+  background-color: rgb(241 245 249 / 0.8) !important;
+}
+
+html.light .bg-navy-950\/40 {
+  background-color: rgb(241 245 249 / 0.8) !important;
+}
 
 /* ============================================================
-   3D VISUALIZATION SURFACES — Threat Network, Attack Path, User
-   Relationship Network. Framed distinctly from surrounding glass
-   panels (cyan hairline + glow) so they read as an instrument/
-   viewport rather than an unstyled block, in both themes.
+   3D VISUALIZATION SURFACES
    ============================================================ */
+
 .viz-dark-surface {
   position: relative;
-  background: radial-gradient(ellipse at top, #0B1220 0%, #05070C 100%);
+
+  background:
+    radial-gradient(
+      ellipse at top,
+      #0b1220 0%,
+      #05070c 100%
+    );
+
   background-image:
-    radial-gradient(ellipse at top, #0B1220 0%, #05070C 100%),
-    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-  background-size: auto, 32px 32px, 32px 32px;
+    radial-gradient(
+      ellipse at top,
+      #0b1220 0%,
+      #05070c 100%
+    ),
+    linear-gradient(
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    );
+
+  background-size:
+    auto,
+    32px 32px,
+    32px 32px;
+
   border-radius: 0.75rem;
   overflow: hidden;
+
   border: 1px solid rgba(34, 211, 238, 0.18);
+
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.03),
     0 0 24px -6px rgba(34, 211, 238, 0.15),
     0 10px 28px -12px rgba(0, 0, 0, 0.45);
 }
+
 html.light .viz-dark-surface {
-  background: #FFFFFF;
+  background: #ffffff;
+
   background-image:
-    linear-gradient(rgba(15,23,42,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15,23,42,0.03) 1px, transparent 1px);
+    linear-gradient(
+      rgba(15, 23, 42, 0.03) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(15, 23, 42, 0.03) 1px,
+      transparent 1px
+    );
+
   background-size: 32px 32px;
+
   border: 1px solid rgba(34, 211, 238, 0.25);
+
   box-shadow:
     inset 0 0 0 1px rgba(15, 23, 42, 0.03),
     0 0 20px -8px rgba(34, 211, 238, 0.25),
     0 8px 24px -12px rgba(15, 23, 42, 0.12);
 }
+
+/* ============================================================
+   JARVIS PAGE
+   ============================================================ */
+
+.jarvis-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.jarvis-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.jarvis-title {
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+
+  background: linear-gradient(
+    90deg,
+    #fff,
+    var(--cyan)
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  color: transparent;
+}
+
+html.light .jarvis-title {
+  background: linear-gradient(
+    90deg,
+    #0f172a,
+    var(--cyan)
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  color: transparent;
+}
+
+.jarvis-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.jarvis-nav {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.jarvis-nav-btn {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+
+  font-family: var(--font-mono);
+  font-size: 11px;
+
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  padding: 8px 14px;
+  border-radius: 999px;
+
+  cursor: pointer;
+}
+
+.jarvis-nav-btn:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.jarvis-nav-btn.is-active {
+  background: var(--blue-dim);
+  border-color: var(--blue);
+  color: var(--cyan);
+}
+
+.jarvis-main {
+  flex: 1;
+
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 0.8fr;
+
+  gap: 24px;
+  padding: 28px 32px 40px;
+}
+
+@media (max-width: 1100px) {
+  .jarvis-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   JARVIS CHAT
+   ============================================================ */
+
+.jarvis-chat {
+  display: flex;
+  flex-direction: column;
+
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+
+  overflow: hidden;
+  min-height: 520px;
+}
+
+.jarvis-chat-log {
+  flex: 1;
+
+  overflow-y: auto;
+
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.jarvis-hint {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.jarvis-bubble {
+  max-width: 92%;
+  padding: 12px 14px;
+  border-radius: 12px;
+}
+
+.jarvis-bubble-label {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+
+  color: var(--text-dim);
+
+  margin-bottom: 4px;
+}
+
+.jarvis-bubble-text {
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.jarvis-bubble-user {
+  align-self: flex-end;
+
+  background: var(--blue-dim);
+  border: 1px solid rgba(79, 124, 255, 0.3);
+}
+
+.jarvis-bubble-assistant {
+  align-self: flex-start;
+
+  background: var(--cyan-dim);
+  border: 1px solid rgba(111, 227, 255, 0.25);
+}
+
+.jarvis-bubble-interim {
+  opacity: 0.55;
+}
+
+.jarvis-input-row {
+  display: flex;
+  gap: 8px;
+
+  padding: 14px;
+
+  border-top: 1px solid var(--border);
+}
+
+.jarvis-input {
+  flex: 1;
+
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  padding: 11px 14px;
+
+  color: var(--text);
+
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+
+.jarvis-input:focus {
+  outline: none;
+  border-color: var(--cyan);
+}
+
+.jarvis-mic-btn,
+.jarvis-send-btn {
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+  border: 1px solid var(--border);
+
+  background: var(--panel-2);
+  color: var(--text-muted);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+.jarvis-send-btn:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.jarvis-mic-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.jarvis-mic-btn.is-active {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
+
+  animation: mic-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes mic-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(240, 70, 91, 0.5);
+  }
+
+  50% {
+    box-shadow: 0 0 0 8px rgba(240, 70, 91, 0);
+  }
+}
+
+/* ============================================================
+   JARVIS AVATAR CORE
+   ============================================================ */
+
+.jarvis-avatar-col {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 18px;
+  padding: 20px;
+}
+
+.jarvis-core {
+  position: relative;
+
+  width: 100%;
+  max-width: 320px;
+}
+
+.jarvis-core-svg {
+  width: 100%;
+  height: auto;
+}
+
+.core-halo {
+  transition: opacity 0.4s ease;
+}
+
+.core-ring {
+  transform-origin: 200px 200px;
+}
+
+.core-nucleus {
+  filter: drop-shadow(0 0 16px #8fe9ff);
+}
+
+.jarvis-core[data-state="idle"] .core-ring-0 {
+  animation: spin-slow 30s linear infinite;
+}
+
+.jarvis-core[data-state="idle"] .core-ring-1 {
+  animation: spin-slow-rev 22s linear infinite;
+}
+
+.jarvis-core[data-state="idle"] .core-nucleus {
+  animation: breathe 3.5s ease-in-out infinite;
+}
+
+.jarvis-core[data-state="listening"] .core-ring-0 {
+  animation: spin-fast 6s linear infinite;
+}
+
+.jarvis-core[data-state="listening"] .core-halo {
+  opacity: 1;
+}
+
+.jarvis-core[data-state="listening"] .core-nucleus {
+  animation: pulse-strong 0.9s ease-in-out infinite;
+}
+
+.jarvis-core[data-state="speaking"] .core-ring-1 {
+  animation: spin-fast-rev 4s linear infinite;
+}
+
+.jarvis-core[data-state="speaking"] .core-nucleus {
+  animation: pulse-strong 0.5s ease-in-out infinite;
+}
+
+.jarvis-core[data-state="thinking"] .core-ring-2 {
+  animation: spin-fast 3s linear infinite;
+}
+
+.jarvis-core[data-state="thinking"] .core-nucleus {
+  animation: pulse-strong 0.7s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-slow-rev {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes spin-fast {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-fast-rev {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    r: 34;
+    opacity: 0.9;
+  }
+
+  50% {
+    r: 38;
+    opacity: 1;
+  }
+}
+
+@keyframes pulse-strong {
+  0%,
+  100% {
+    r: 34;
+  }
+
+  50% {
+    r: 44;
+  }
+}
+
+.jarvis-core-label {
+  position: absolute;
+
+  bottom: 6px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  font-family: var(--font-mono);
+  font-size: 11px;
+
+  letter-spacing: 0.12em;
+
+  color: var(--cyan);
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.jarvis-core-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: var(--cyan);
+
+  box-shadow: 0 0 8px var(--cyan);
+}
+
+.jarvis-tagline {
+  text-align: center;
+
+  color: var(--text-muted);
+
+  font-size: 13px;
+  line-height: 1.7;
+
+  max-width: 280px;
+}
+
+.jarvis-tagline em {
+  color: var(--cyan);
+  font-style: normal;
+}
+
+/* ============================================================
+   JARVIS SIDE PANEL
+   ============================================================ */
+
+.jarvis-side {
+  display: flex;
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+.jarvis-panel {
+  background: var(--panel);
+
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  padding: 18px 20px;
+}
+
+.jarvis-panel-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+
+  color: var(--text-muted);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 14px;
+}
+
+.jarvis-command-list {
+  list-style: none;
+
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 11px;
+}
+
+.jarvis-command-list li {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  font-size: 12.5px;
+  color: var(--text);
+}
+
+.jarvis-command-list svg {
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+
+.jarvis-status-pill {
+  font-family: var(--font-mono);
+
+  font-size: 9.5px;
+
+  padding: 2px 8px;
+
+  border-radius: 999px;
+
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.jarvis-status-pill.is-online {
+  background: rgba(52, 211, 153, 0.14);
+  color: var(--green);
+}
+
+.jarvis-status-pill.is-offline {
+  background: rgba(240, 70, 91, 0.14);
+  color: var(--red);
+}
+
+.jarvis-status-rows {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.jarvis-status-row {
+  display: flex;
+  justify-content: space-between;
+
+  font-size: 12.5px;
+}
+
+.jarvis-status-row .ok {
+  color: var(--green);
+}
+
+.jarvis-status-row .bad {
+  color: var(--red);
+}
+
+.jarvis-status-hint {
+  margin: 12px 0 0;
+
+  font-size: 11.5px;
+
+  color: var(--text-dim);
+
+  line-height: 1.6;
+}
+
+/* ============================================================
+   STUB PAGE
+   ============================================================ */
+
+.stub-page {
+  max-width: 640px;
+
+  margin: 80px auto;
+
+  padding: 0 24px;
+
+  text-align: center;
+}
+
+.stub-page h1 {
+  font-family: var(--font-mono);
+
+  text-transform: capitalize;
+
+  color: var(--cyan);
+}
+
+.stub-page p {
+  color: var(--text-muted);
+}
+
+.stub-back {
+  color: var(--text-muted);
+
+  font-size: 13px;
+
+  text-decoration: none;
+}
+
+.stub-back:hover {
+  color: var(--cyan);
+}
+

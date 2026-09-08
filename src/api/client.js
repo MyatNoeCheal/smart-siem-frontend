@@ -25,6 +25,9 @@ export async function sendAssistantMessage({ message, history = [], focus = "ove
     message,
     history,
     focus,
+  }, {
+    // Ollama may need longer than the normal dashboard API timeout on CPU.
+    timeout: 200000,
   });
   return response.data;
 }
