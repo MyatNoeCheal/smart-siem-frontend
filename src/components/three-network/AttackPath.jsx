@@ -2,12 +2,15 @@ import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
 import * as THREE from "three";
+import { useTheme } from "../../context/ThemeContext";
 
 const COLOR = "#FB4B5D";
 const PARTICLE_COUNT = 3;
 
 export default function AttackPath({ start, end }) {
   const particleRefs = useRef([]);
+  const { theme } = useTheme();
+  const lightMode = theme === "light";
 
   const curve = useMemo(() => {
     const mid = start.clone().add(end).multiplyScalar(0.5);
@@ -30,7 +33,7 @@ export default function AttackPath({ start, end }) {
 
   return (
     <group>
-      <Line points={points} color={COLOR} lineWidth={2} transparent opacity={0.55} />
+      <Line points={points} color={COLOR} lineWidth={lightMode ? 2.4 : 2} transparent opacity={lightMode ? 0.82 : 0.55} />
       {Array.from({ length: PARTICLE_COUNT }).map((_, i) => (
         <mesh key={i} ref={(el) => (particleRefs.current[i] = el)}>
           <sphereGeometry args={[0.075, 10, 10]} />

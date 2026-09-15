@@ -22,9 +22,9 @@ export default {
           950: "rgb(var(--navy-950) / <alpha-value>)",
         },
         command: {
-          cyan: "#22D3EE",
-          blue: "#5B8CFF",
-          violet: "#8B7CF6",
+          cyan: "rgb(var(--accent-cyan) / <alpha-value>)",
+          blue: "rgb(var(--accent-blue) / <alpha-value>)",
+          violet: "rgb(var(--accent-violet) / <alpha-value>)",
         },
         risk: {
           critical: "#FB4B5D",
@@ -34,11 +34,11 @@ export default {
         },
       },
       boxShadow: {
-        glow: "0 0 0 1px rgba(34,211,238,0.15), 0 0 24px -4px rgba(34,211,238,0.25)",
+        glow: "0 0 0 1px rgba(86,14,162,0.2), 0 0 24px -4px rgba(201,125,199,0.35)",
       },
       backgroundImage: {
-        "grid-fade":
-          "radial-gradient(circle at 50% 0%, rgba(91,140,255,0.10), transparent 60%)",
+        "grid-fade": "radial-gradient(circle at 50% 0%, rgba(86,14,162,0.12), transparent 60%)",
+        luxury: "linear-gradient(135deg, #560EA2 0%, #C97DC7 55%, #F595A6 100%)",
       },
     },
   },

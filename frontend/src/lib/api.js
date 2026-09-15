@@ -1,9 +1,8 @@
 // Talks to the local crp-siem-backend. Everything runs on localhost for
-// the JARVIS voice demo. Keep this client aligned with the main dashboard's
-// auth storage so both surfaces use the same analyst session.
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
-const TOKEN_KEY = "smart_siem_token";
-const USER_KEY = "smart_siem_user";
+// the JARVIS voice demo -- see WIRE_UP_MAIN.md / SETUP.md.
+const API_BASE = "http://localhost:8000";
+const TOKEN_KEY = "jarvis-auth-token";
+const USER_KEY = "jarvis-auth-user";
 
 export function getStoredAuth() {
   const token = localStorage.getItem(TOKEN_KEY);
@@ -21,6 +20,11 @@ export function clearStoredAuth() {
   localStorage.removeItem(USER_KEY);
 }
 
+/**
+ * Same /auth/login endpoint the main SIEM dashboard already uses (see
+ * auth.py) -- JARVIS is a second client of the same analyst accounts,
+ * not a separate login system.
+ */
 export async function login(username, password) {
   const res = await fetch(`${API_BASE}/auth/login`, {
     method: "POST",
@@ -40,7 +44,7 @@ export async function login(username, password) {
 async function authFetch(path, options = {}) {
   const stored = getStoredAuth();
   const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
-  if (stored) headers.Authorization = `Bearer ${stored.token}`;
+  if (stored) headers["Authorization"] = `Bearer ${stored.token}`;
 
   const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
   if (res.status === 401) {
@@ -58,27 +62,30 @@ export function apiGet(path) {
   return authFetch(path);
 }
 
-export async function checkAssistantHealth() {
+export function checkAssistantHealth() {
   return authFetch("/assistant/health");
 }
 
 /**
- * Sends one message to JARVIS. `history` is a plain array of
- * { role: "user" | "assistant", content: string } in chronological order
- * (the last ~12 are kept server-side, so it's fine to pass the whole
- * conversation).
+ * `history` is [{ role: "user" | "assistant", content }] in chronological
+ * order -- the backend only keeps the last ~12 turns, so it's fine to
+ * pass the whole conversation each time.
  */
-export async function sendAssistantMessage(message, history = [], currentPage = null) {
+export function sendAssistantMessage(message, history = [], currentPage = null) {
   return authFetch("/assistant/chat", {
     method: "POST",
     body: JSON.stringify({ message, history, current_page: currentPage }),
   });
   // -> { reply, action, tool_calls }
+  // action.type === "navigate"        -> { target: "threats" }
+  // action.type === "confirm_action"  -> { tool, args, summary }
 }
 
+/** Actually executes a write action the analyst just approved. */
 export function confirmAssistantAction(tool, args) {
   return authFetch("/assistant/confirm", {
     method: "POST",
     body: JSON.stringify({ tool, args }),
   });
+  // -> { reply, ok }
 }

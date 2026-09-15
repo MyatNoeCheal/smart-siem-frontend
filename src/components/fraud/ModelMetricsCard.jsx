@@ -3,11 +3,11 @@
 // metrics — shows an honest "not available" state instead.
 export default function ModelMetricsCard({ metrics }) {
   return (
-    <div className="rounded-xl bg-slate-900/60 border border-slate-800 p-4 backdrop-blur-sm h-full">
-      <h2 className="text-sm font-medium text-slate-300 mb-3">Model Evaluation Metrics</h2>
+    <div className="glass-panel h-full p-4">
+      <h2 className="mb-3 font-display text-sm font-medium text-navy-100">Model Evaluation Metrics</h2>
 
       {!metrics ? (
-        <div className="text-xs text-slate-500 py-6 text-center">
+        <div className="py-6 text-center text-xs text-navy-400">
           No evaluation metrics endpoint available yet. Run evaluate_model.py
           and expose its metrics_summary.json via a backend endpoint to
           populate this panel.
@@ -26,9 +26,9 @@ export default function ModelMetricsCard({ metrics }) {
 
 function MetricTile({ label, value }) {
   return (
-    <div className="rounded-lg bg-slate-800/50 border border-slate-700 p-3 text-center">
-      <div className="text-[11px] text-slate-500 mb-1">{label}</div>
-      <div className="text-lg font-mono text-cyan-400">
+    <div className="rounded-lg border border-white/[0.08] bg-navy-900/50 p-3 text-center">
+      <div className="mb-1 text-[11px] text-navy-400">{label}</div>
+      <div className="font-mono text-lg text-command-cyan">
         {typeof value === 'number' ? value.toFixed(3) : '—'}
       </div>
     </div>

@@ -39,7 +39,7 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onCloseMobile
         )}
       >
         <div className="flex h-16 shrink-0 items-center gap-2.5 border-b border-white/[0.06] px-4">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-command-cyan/20 to-command-blue/20 ring-1 ring-command-cyan/30">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg luxury-gradient luxury-glow">
             <ShieldHalf className="h-5 w-5 text-command-cyan" />
           </div>
           {!collapsed && (
@@ -63,8 +63,8 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onCloseMobile
               className={({ isActive }) =>
                 clsx(
                   "flex items-center gap-3 rounded-lg px-3 py-2.5 text-[13px] font-medium transition-colors",
-                  isActive
-                    ? "bg-command-cyan/[0.10] text-command-cyan ring-1 ring-command-cyan/20"
+                 isActive
+  ? "luxury-gradient text-white ring-1 ring-command-violet/30"
                     : "text-navy-100/70 hover:bg-white/[0.04] hover:text-navy-50"
                 )
               }

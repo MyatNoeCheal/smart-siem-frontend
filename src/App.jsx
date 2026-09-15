@@ -1,22 +1,30 @@
+/* npm run dev */
+
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import AppShell from "./layouts/AppShell";
-
-import Overview from "./pages/Overview";
-import Threats from "./pages/Threats";
-import ThreatInvestigation from "./pages/ThreatInvestigation";
-import FraudDetection from "./pages/FraudDetection";
-import UserBehavior from "./pages/UserBehavior";
-import AdminActivity from "./pages/AdminActivity";
-import Logs from "./pages/Logs";
-import AIInsightsHub from "./pages/AIInsightsHub";
-
-import Login from "./pages/Login";
 import RequireAuth from "./components/RequireAuth";
-import ApiDiagnostics from "./pages/dev/ApiDiagnostics";
 
-import Jarvis from "./pages/Jarvis";
-import StubPage from "./pages/StubPage";
+const Overview = lazy(() => import("./pages/Overview"));
+const Threats = lazy(() => import("./pages/Threats"));
+const ThreatInvestigation = lazy(() => import("./pages/ThreatInvestigation"));
+const FraudDetection = lazy(() => import("./pages/FraudDetection"));
+const UserBehavior = lazy(() => import("./pages/UserBehavior"));
+const AdminActivity = lazy(() => import("./pages/AdminActivity"));
+const Logs = lazy(() => import("./pages/Logs"));
+const AIInsightsHub = lazy(() => import("./pages/AIInsightsHub"));
+const Login = lazy(() => import("./pages/Login"));
+const ApiDiagnostics = lazy(() => import("./pages/dev/ApiDiagnostics"));
+const Jarvis = lazy(() => import("./pages/Jarvis"));
+
+function RouteLoading() {
+  return (
+    <div className="flex min-h-[240px] items-center justify-center font-mono text-[11px] uppercase tracking-wider text-navy-400">
+      Loading workspace...
+    </div>
+  );
+}
 
 export default function App() {
   return (
@@ -26,7 +34,8 @@ export default function App() {
         v7_relativeSplatPath: true,
       }}
     >
-      <Routes>
+      <Suspense fallback={<RouteLoading />}>
+        <Routes>
 
         {/* Login */}
         <Route path="/login" element={<Login />} />
@@ -87,7 +96,8 @@ export default function App() {
           />
         </Route>
 
-      </Routes>
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }

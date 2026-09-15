@@ -65,7 +65,7 @@ export default function Topbar({ onOpenMobileNav }) {
         </button>
 
         <button className="flex items-center gap-2 rounded-full border border-white/[0.06] bg-navy-800/60 py-1.5 pl-1.5 pr-2.5 hover:border-command-cyan/30">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-command-blue to-command-violet text-[11px] font-semibold text-white">
+          <span className="flex h-7 w-7 items-center justify-center rounded-full luxury-gradient text-[11px] font-semibold text-white">
             AN
           </span>
           <span className="hidden text-left leading-tight sm:block">

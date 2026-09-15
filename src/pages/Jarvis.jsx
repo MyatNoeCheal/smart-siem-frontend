@@ -3,13 +3,15 @@ import { useNavigate, useLocation } from "react-router-dom";
 import AvatarCore from "../components/AvatarCore";
 import ChatPanel from "../components/ChatPanel";
 import SystemPanel from "../components/SystemPanel";
-import { checkAssistantHealth, sendAssistantMessage } from "../lib/api";
+import { checkAssistantHealth, confirmAssistantAction, sendAssistantMessage } from "../lib/api";
 import { useVoice } from "../lib/useVoice";
 
 export default function Jarvis() {
   const [messages, setMessages] = useState([]);
   const [thinking, setThinking] = useState(false);
   const [health, setHealth] = useState(null);
+  const [pendingAction, setPendingAction] = useState(null);
+  const [confirming, setConfirming] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -33,6 +35,20 @@ export default function Jarvis() {
   );
 
   async function handleUserMessage(text) {
+    const normalizedText = text.trim().toLowerCase();
+    if (pendingAction) {
+      if (/^(confirm|confirmed|yes|approve|approved|do it|go ahead)$/.test(normalizedText)) {
+        await runConfirm();
+      } else if (/^(cancel|cancelled|no|deny|denied|stop)$/.test(normalizedText)) {
+        runCancel();
+      } else {
+        const prompt = "Please say confirm to execute the pending action, or cancel to stop.";
+        setMessages((prev) => [...prev, { role: "assistant", content: prompt }]);
+        speak(prompt);
+      }
+      return;
+    }
+
     const userMsg = { role: "user", content: text };
     setMessages((prev) => [...prev, userMsg]);
     setThinking(true);
@@ -43,6 +59,9 @@ export default function Jarvis() {
         currentPage
       );
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+      if (data.action?.type === "confirm_action") {
+        setPendingAction(data.action);
+      }
       handleReply(data.reply, data.action);
     } catch (err) {
       const msg = "I couldn't reach my backend or the language model. Check that both are running locally.";
@@ -50,6 +69,30 @@ export default function Jarvis() {
     } finally {
       setThinking(false);
     }
+  }
+
+  async function runConfirm() {
+    if (!pendingAction || confirming) return;
+    setConfirming(true);
+    try {
+      const data = await confirmAssistantAction(pendingAction.tool, pendingAction.args);
+      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+      speak(data.reply);
+    } catch (err) {
+      const message = `The action could not be completed: ${err.message}`;
+      setMessages((prev) => [...prev, { role: "assistant", content: message }]);
+      speak(message);
+    } finally {
+      setPendingAction(null);
+      setConfirming(false);
+    }
+  }
+
+  function runCancel() {
+    const message = "Understood. I cancelled the pending action.";
+    setMessages((prev) => [...prev, { role: "assistant", content: message }]);
+    setPendingAction(null);
+    speak(message);
   }
 
   const { supported, listening, speaking, interimText, startListening, stopListening, speak } =

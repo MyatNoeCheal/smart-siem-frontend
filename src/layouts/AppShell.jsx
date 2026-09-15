@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
+import AssistantWidget from "../components/AssistantWidget";
 
 export default function AppShell() {
   const [collapsed, setCollapsed] = useState(false);
@@ -21,6 +22,7 @@ export default function AppShell() {
           <Outlet />
         </main>
       </div>
+      <AssistantWidget />
     </div>
   );
 }

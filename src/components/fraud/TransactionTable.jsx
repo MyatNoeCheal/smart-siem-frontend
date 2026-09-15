@@ -1,19 +1,19 @@
 const STATUS_COLORS = {
-  new: 'bg-cyan-500/10 text-cyan-400',
-  investigating: 'bg-amber-500/10 text-amber-400',
-  resolved: 'bg-emerald-500/10 text-emerald-400',
+  new: 'bg-command-cyan/10 text-command-cyan',
+  investigating: 'bg-risk-high/10 text-risk-high',
+  resolved: 'bg-risk-low/10 text-risk-low',
 };
 
 export default function TransactionTable({ transactions, onSelect, selectedId }) {
   if (!transactions?.length) {
-    return <div className="text-sm text-slate-500 py-8 text-center">No flagged transactions.</div>;
+    return <div className="py-8 text-center text-sm text-navy-400">No flagged transactions.</div>;
   }
 
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="text-left text-slate-500 text-xs uppercase tracking-wide border-b border-slate-800">
+          <tr className="border-b border-white/[0.06] text-left text-xs uppercase tracking-wide text-navy-400">
             <th className="py-2 pr-4">Transaction</th>
             <th className="py-2 pr-4">User</th>
             <th className="py-2 pr-4">Amount</th>
@@ -28,19 +28,19 @@ export default function TransactionTable({ transactions, onSelect, selectedId })
             <tr
               key={t.id}
               onClick={() => onSelect(t)}
-              className={`cursor-pointer border-b border-slate-800/60 hover:bg-slate-800/40 transition-colors ${
-                selectedId === t.id ? 'bg-slate-800/60' : ''
+              className={`cursor-pointer border-b border-white/[0.04] transition-colors hover:bg-white/[0.03] ${
+                selectedId === t.id ? 'bg-white/[0.05]' : ''
               }`}
             >
-              <td className="py-2 pr-4 font-mono text-cyan-400">{t.id}</td>
-              <td className="py-2 pr-4 text-slate-300">{t.user}</td>
-             <td className="py-2 pr-4 text-slate-300">{t.amount != null ? `$${t.amount.toLocaleString()}` : '—'}</td>
-              <td className="py-2 pr-4 text-slate-500 text-xs">{new Date(t.timestamp).toLocaleString()}</td>
+              <td className="py-2 pr-4 font-mono text-command-cyan">{t.id}</td>
+              <td className="py-2 pr-4 text-navy-100">{t.user}</td>
+             <td className="py-2 pr-4 text-navy-100">{t.amount != null ? `$${t.amount.toLocaleString()}` : '—'}</td>
+              <td className="py-2 pr-4 text-xs text-navy-400">{new Date(t.timestamp).toLocaleString()}</td>
               <td className="py-2 pr-4">
                 <RiskBadge score={t.risk_score} />
               </td>
               <td className="py-2 pr-4">
-                <span className={t.classification === 'Fraud' ? 'text-rose-400 font-medium' : 'text-slate-400'}>
+                <span className={t.classification === 'Fraud' ? 'font-medium text-risk-critical' : 'text-navy-400'}>
                   {t.classification}
                 </span>
               </td>
@@ -58,6 +58,6 @@ export default function TransactionTable({ transactions, onSelect, selectedId })
 }
 
 function RiskBadge({ score }) {
-  const color = score >= 70 ? 'text-rose-400' : score >= 40 ? 'text-amber-400' : 'text-emerald-400';
+  const color = score >= 70 ? 'text-risk-critical' : score >= 40 ? 'text-risk-high' : 'text-risk-low';
   return <span className={`font-mono font-semibold ${color}`}>{score}</span>;
 }

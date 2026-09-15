@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Stars, Text } from "@react-three/drei";
+import { OrbitControls, Stars, Text, Billboard } from "@react-three/drei";
 import * as THREE from "three";
 import NetworkNode from "./NetworkNode";
 import NetworkConnection from "./NetworkConnection";
@@ -8,11 +8,8 @@ import AttackPath from "./AttackPath";
 import ThreatTooltip from "./ThreatTooltip";
 import EntityDetailsPanel from "./EntityDetailsPanel";
 import { LAYER_LABELS } from "./threatNetworkTheme";
+import { useTheme } from "../../context/ThemeContext";
 
-// Subtle, non-flashy camera nudge fired once per `trigger` change --
-// a quick decaying push-in/settle, not a shake. Used to punctuate the
-// moment a threat is confirmed without disrupting the user's own
-// orbit/zoom/pan state.
 function CameraPulseEffect({ trigger }) {
   const { camera } = useThree();
   const prevTrigger = useRef(trigger);
@@ -47,17 +44,16 @@ function CameraPulseEffect({ trigger }) {
 export default function ThreatNetwork({
   nodes,
   edges,
-  height = 480,
+  height = 520,
   nodeOverrides = {},
   attackEdgeIds = [],
   cameraPulse = 0,
 }) {
   const [hoveredNode, setHoveredNode] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
+  const { theme } = useTheme();
+  const lightMode = theme === "light";
 
-  // Merge simulation overrides onto the base topology without mutating it --
-  // this is the only place a live/simulated threatLevel or riskScore
-  // update needs to be applied before rendering.
   const mergedNodes = useMemo(
     () => nodes.map((n) => (nodeOverrides[n.id] ? { ...n, ...nodeOverrides[n.id] } : n)),
     [nodes, nodeOverrides]
@@ -87,20 +83,22 @@ export default function ThreatNetwork({
   const handleSelect = useCallback((node) => setSelectedNode((prev) => (prev?.id === node.id ? null : node)), []);
 
   return (
-    <div className="viz-dark-surface relative w-full" style={{ height }}>
+    <div className="relative w-full" style={{ height }}>
       <Canvas
-        camera={{ position: [11, 6, 15], fov: 48 }}
+        camera={{ position: [17, 9, 22], fov: 44 }}
         dpr={[1, 1.5]}
         gl={{ antialias: true, alpha: true }}
       >
         <ambientLight intensity={0.55} />
         <pointLight position={[10, 10, 10]} intensity={0.4} />
-        <Stars radius={40} depth={25} count={500} factor={1.2} saturation={0} fade speed={0.3} />
+        <Stars radius={40} depth={25} count={500} factor={1.2} saturation={0} fade speed={0.3} color={lightMode ? "#8FB5A0" : "#FFFFFF"} />
 
         {LAYER_LABELS.map((l) => (
-          <Text key={l.key} position={[-9.5, l.y, 0]} fontSize={0.32} color="#4C5A78" anchorX="left" anchorY="middle">
-            {l.label}
-          </Text>
+          <Billboard key={l.key} position={[-13, l.y * (9.5 / 7), 0]}>
+            <Text fontSize={0.4} color={lightMode ? "#557564" : "#6C7A94"} anchorX="left" anchorY="middle">
+              {l.label}
+            </Text>
+          </Billboard>
         ))}
 
         {resolvedEdges.map((e) =>
@@ -124,7 +122,7 @@ export default function ThreatNetwork({
         <ThreatTooltip node={hoveredNode} />
         <CameraPulseEffect trigger={cameraPulse} />
 
-        <OrbitControls enableDamping dampingFactor={0.08} minDistance={8} maxDistance={28} enablePan />
+        <OrbitControls enableDamping dampingFactor={0.08} minDistance={12} maxDistance={40} enablePan />
       </Canvas>
 
       <EntityDetailsPanel node={selectedNode} onClose={() => setSelectedNode(null)} />

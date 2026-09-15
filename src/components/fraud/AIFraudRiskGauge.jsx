@@ -5,8 +5,8 @@ export default function AIFraudRiskGauge({ score = 0 }) {
   const offset = circumference - (pct / 100) * circumference;
 
   return (
-    <div className="rounded-xl bg-slate-900/60 border border-slate-800 p-4 backdrop-blur-sm flex flex-col items-center justify-center">
-      <h2 className="text-sm font-medium text-slate-300 mb-3 self-start">AI Fraud Risk</h2>
+    <div className="glass-panel flex flex-col items-center justify-center p-4">
+      <h2 className="mb-3 self-start font-display text-sm font-medium text-navy-100">AI Fraud Risk</h2>
       <svg width="140" height="140" viewBox="0 0 140 140">
         <circle cx="70" cy="70" r="54" fill="none" stroke="#1e293b" strokeWidth="10" />
         <circle
@@ -18,7 +18,7 @@ export default function AIFraudRiskGauge({ score = 0 }) {
           {pct.toFixed(0)}
         </text>
       </svg>
-      <p className="text-xs text-slate-500 mt-2">Average risk across recent transactions</p>
+      <p className="mt-2 text-xs text-navy-400">Average risk across recent transactions</p>
     </div>
   );
 }

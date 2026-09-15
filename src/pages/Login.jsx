@@ -72,7 +72,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={submitting}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-command-cyan py-2.5 font-mono text-[12px] font-semibold uppercase tracking-wider text-navy-950 transition-opacity disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-lg luxury-gradient luxury-glow py-2.5 font-mono text-[12px] font-semibold uppercase tracking-wider text-white transition-opacity disabled:opacity-50"
           >
             {submitting && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
             {submitting ? "Signing in…" : "Sign In"}

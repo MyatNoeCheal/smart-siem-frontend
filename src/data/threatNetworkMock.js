@@ -1,29 +1,38 @@
 // ============================================================
 // MOCK DATA — shape mirrors what a real /entity-risk + /threats
-// response could be reduced to. Swap generateThreatNetworkMock()
-// for a hook that fetches real nodes/edges from FastAPI once
-// those endpoints exist; every consumer downstream only needs
+// response could be reduced to. Swap generateThreatNetworkMock() for
+// a hook that fetches real nodes/edges from FastAPI once those
+// endpoints exist; every consumer downstream only needs
 // { nodes, edges } in this shape.
-// ============================================================
+//
+// LAYOUT NOTES: layers are spaced further apart vertically than a
+// first pass, and each layer's disc is rotated by a different offset
+// (in addition to a growing radius) so that nodes in adjacent layers
+// don't line up directly above/below one another in the default
+// camera angle -- that's what was causing the "everything crammed
+// together" look. ============================================================
 
 const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5));
 
-function scatterOnDisc(count, radius, y) {
+function scatterOnDisc(count, radius, y, rotationOffset = 0) {
   const points = [];
   for (let i = 0; i < count; i++) {
-    const angle = i * GOLDEN_ANGLE;
+    const angle = i * GOLDEN_ANGLE + rotationOffset;
     const r = radius * Math.sqrt((i + 0.6) / count);
     points.push([Math.cos(angle) * r, y, Math.sin(angle) * r]);
   }
   return points;
 }
 
+// Increased vertical gaps (was 3.5 apart, now 4.6) and staggered
+// rotationOffset per layer so projected node positions spread out
+// rather than stacking in a visually dense column.
 const LAYER_DEFS = [
-  { key: "internet", y: 7, radius: 1.2 },
-  { key: "server", y: 3.5, radius: 4.6 },
-  { key: "user", y: 0, radius: 6.2 },
-  { key: "application", y: -3.5, radius: 4.6 },
-  { key: "database", y: -7, radius: 2.4 },
+  { key: "internet", y: 9.5, radius: 1.4, rotationOffset: 0 },
+  { key: "server", y: 4.9, radius: 5.6, rotationOffset: 0.7 },
+  { key: "user", y: 0, radius: 7.4, rotationOffset: 1.9 },
+  { key: "application", y: -4.9, radius: 5.6, rotationOffset: 3.1 },
+  { key: "database", y: -9.5, radius: 2.8, rotationOffset: 4.4 },
 ];
 
 const RAW_NODES = [
@@ -100,7 +109,7 @@ export function generateThreatNetworkMock() {
   const cursors = {};
   const nodes = RAW_NODES.map((n) => {
     const layerDef = LAYER_DEFS.find((l) => l.key === n.layer);
-    const positions = scatterOnDisc(countsByLayer[n.layer], layerDef.radius, layerDef.y);
+    const positions = scatterOnDisc(countsByLayer[n.layer], layerDef.radius, layerDef.y, layerDef.rotationOffset);
     const idx = cursors[n.layer] || 0;
     cursors[n.layer] = idx + 1;
     return {

@@ -2,17 +2,22 @@ import { useRef, memo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
 import * as THREE from "three";
+import { useTheme } from "../../context/ThemeContext";
 
 const LEVEL_STYLE = {
-  normal: { color: "#5B8CFF", opacity: 0.28, width: 1 },
-  suspicious: { color: "#F5A623", opacity: 0.45, width: 1.4 },
-  critical: { color: "#FB4B5D", opacity: 0, width: 0 }, // handled by AttackPath instead
+  normal: { color: "#5B8CFF", opacity: 0.16, width: 0.8 },
+  suspicious: { color: "#F5A623", opacity: 0.4, width: 1.3 },
+  critical: { color: "#FB4B5D", opacity: 0, width: 0 },
 };
 
 function NetworkConnection({ start, end, threatLevel, animated }) {
   const particleRef = useRef();
+  const { theme } = useTheme();
+  const lightMode = theme === "light";
   const speed = threatLevel === "suspicious" ? 0.35 : 0.18;
   const style = LEVEL_STYLE[threatLevel] || LEVEL_STYLE.normal;
+  const lineColor = lightMode && threatLevel === "normal" ? "#3B5DB8" : style.color;
+  const lineOpacity = lightMode && threatLevel === "normal" ? 0.48 : lightMode ? 0.7 : style.opacity;
 
   useFrame(({ clock }) => {
     if (!particleRef.current || !animated || threatLevel === "critical") return;
@@ -25,11 +30,11 @@ function NetworkConnection({ start, end, threatLevel, animated }) {
 
   return (
     <>
-      <Line points={[start, end]} color={style.color} lineWidth={style.width} transparent opacity={style.opacity} />
+      <Line points={[start, end]} color={lineColor} lineWidth={lightMode ? style.width + 0.35 : style.width} transparent opacity={lineOpacity} />
       {animated && (
         <mesh ref={particleRef}>
           <sphereGeometry args={[0.05, 8, 8]} />
-          <meshBasicMaterial color={style.color} transparent blending={THREE.AdditiveBlending} depthWrite={false} />
+          <meshBasicMaterial color={lineColor} transparent blending={THREE.AdditiveBlending} depthWrite={false} />
         </mesh>
       )}
     </>

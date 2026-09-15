@@ -11,7 +11,7 @@ export default function AttackSimulationControls({ isRunning, isDetected, onSimu
           "flex items-center gap-2 rounded-lg px-4 py-2 font-mono text-[12px] font-semibold uppercase tracking-wider transition-colors",
           isRunning
             ? "cursor-not-allowed bg-navy-700/60 text-navy-400"
-            : "bg-risk-critical/15 text-risk-critical ring-1 ring-risk-critical/30 hover:bg-risk-critical/25"
+            : "luxury-gradient luxury-glow text-white ring-1 ring-white/10"
         )}
       >
         <Radar className={clsx("h-4 w-4", isRunning && "animate-spin")} />

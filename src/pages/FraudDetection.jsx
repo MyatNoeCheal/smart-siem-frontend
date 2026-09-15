@@ -7,7 +7,6 @@ import AIFraudRiskGauge from '../components/fraud/AIFraudRiskGauge';
 import TransactionTable from '../components/fraud/TransactionTable';
 import TransactionInvestigationPanel from '../components/fraud/TransactionInvestigationPanel';
 import ModelMetricsCard from '../components/fraud/ModelMetricsCard';
-import MockDataBadge from '../components/common/MockDataBadge';
 
 export default function FraudDetection() {
   const [stats, setStats] = useState(null);
@@ -18,7 +17,6 @@ export default function FraudDetection() {
   const [selectedTxn, setSelectedTxn] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [usingMock, setUsingMock] = useState(false);
 
   async function loadAll() {
     setLoading(true);
@@ -37,7 +35,6 @@ export default function FraudDetection() {
       setSeverity(sevRes.data);
       setTransactions(txnRes.data.results || []);
       setModelMetrics(metricsRes.data);
-      setUsingMock(statsRes.isMock || trendRes.isMock || sevRes.isMock || txnRes.isMock);
     } catch (err) {
       setError('Could not load fraud detection data.');
     } finally {
@@ -58,21 +55,20 @@ export default function FraudDetection() {
   if (error) return <PageError message={error} onRetry={loadAll} />;
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-slate-100 tracking-wide">
+          <h1 className="font-display text-xl font-semibold tracking-wide text-navy-50">
             FRAUD DETECTION
           </h1>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-navy-400">
             AI-driven transaction risk monitoring
           </p>
         </div>
-        {usingMock && <MockDataBadge />}
       </div>
 
       {/* Stat strip */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         <FraudStatCard label="Transactions Analyzed" value={stats?.total_transactions?.toLocaleString() ?? '—'} icon="activity" />
         <FraudStatCard label="Fraud Detected" value={stats?.fraud_detected?.toLocaleString() ?? '—'} icon="alert" tone="critical" />
         <FraudStatCard label="Fraud Rate" value={stats ? `${stats.fraud_rate.toFixed(2)}%` : '—'} icon="percent" tone="warning" />
@@ -81,19 +77,19 @@ export default function FraudDetection() {
       </div>
 
       {/* Charts row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 rounded-xl bg-slate-900/60 border border-slate-800 p-4 backdrop-blur-sm">
-          <h2 className="text-sm font-medium text-slate-300 mb-3">Fraud Trend</h2>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="glass-panel p-4 lg:col-span-2">
+          <h2 className="mb-3 font-display text-sm font-medium text-navy-100">Fraud Trend</h2>
           <FraudTrendChart data={trend} />
         </div>
-        <div className="rounded-xl bg-slate-900/60 border border-slate-800 p-4 backdrop-blur-sm">
-          <h2 className="text-sm font-medium text-slate-300 mb-3">Severity Distribution</h2>
+        <div className="glass-panel p-4">
+          <h2 className="mb-3 font-display text-sm font-medium text-navy-100">Severity Distribution</h2>
           <FraudSeverityChart data={severity} />
         </div>
       </div>
 
       {/* Risk gauge + model metrics */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <AIFraudRiskGauge score={stats?.avg_risk_score ?? 0} />
         <div className="lg:col-span-2">
           <ModelMetricsCard metrics={modelMetrics} />
@@ -101,8 +97,8 @@ export default function FraudDetection() {
       </div>
 
       {/* Transactions table */}
-      <div className="rounded-xl bg-slate-900/60 border border-slate-800 p-4 backdrop-blur-sm">
-        <h2 className="text-sm font-medium text-slate-300 mb-3">
+      <div className="glass-panel p-4">
+        <h2 className="mb-3 font-display text-sm font-medium text-navy-100">
           Recent Suspicious Transactions
         </h2>
         <TransactionTable
@@ -124,7 +120,7 @@ export default function FraudDetection() {
 
 function PageLoading() {
   return (
-    <div className="flex items-center justify-center h-full text-slate-400 text-sm">
+    <div className="flex h-full items-center justify-center text-sm text-navy-400">
       Loading fraud detection data…
     </div>
   );
@@ -132,11 +128,11 @@ function PageLoading() {
 
 function PageError({ message, onRetry }) {
   return (
-    <div className="flex flex-col items-center justify-center h-full gap-3 text-slate-400">
+    <div className="flex h-full flex-col items-center justify-center gap-3 text-navy-400">
       <p className="text-sm">{message}</p>
       <button
         onClick={onRetry}
-        className="px-4 py-1.5 text-xs rounded-md border border-slate-700 hover:border-cyan-500 hover:text-cyan-400 transition-colors"
+        className="rounded-lg border border-white/[0.08] bg-navy-800/60 px-4 py-1.5 text-xs text-navy-100 transition-colors hover:border-command-cyan/40 hover:text-command-cyan"
       >
         Retry
       </button>
