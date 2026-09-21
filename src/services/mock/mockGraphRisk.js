@@ -1,0 +1,27 @@
+// [MOCK FALLBACK] — shape matches GET /entity-risk/graph
+export const mockGraphRiskRaw = {
+  available: true,
+  graph_size: { nodes: 24, edges: 13 },
+  threshold: 0.12,
+  results: [
+    { entity: "ip:10.0.0.8", entity_type: "ip", entity_id: "10.0.0.8",
+      graph_anomaly_score: 100.0, is_anomaly: true, degree: 1,
+      top_neighbours: ["user:cust_1120"] },
+    { entity: "user:cust_1120", entity_type: "user", entity_id: "cust_1120",
+      graph_anomaly_score: 91.9, is_anomaly: true, degree: 2,
+      top_neighbours: ["ip:10.0.0.5", "ip:10.0.0.8"] },
+    { entity: "ip:198.51.100.23", entity_type: "ip", entity_id: "198.51.100.23",
+      graph_anomaly_score: 84.7, is_anomaly: true, degree: 0, top_neighbours: [] },
+    { entity: "ip:185.220.159.106", entity_type: "ip", entity_id: "185.220.159.106",
+      graph_anomaly_score: 84.1, is_anomaly: true, degree: 0, top_neighbours: [] },
+    { entity: "ip:10.0.0.5", entity_type: "ip", entity_id: "10.0.0.5",
+      graph_anomaly_score: 79.5, is_anomaly: true, degree: 1,
+      top_neighbours: ["user:cust_1120"] },
+    { entity: "ip:81.171.22.10", entity_type: "ip", entity_id: "81.171.22.10",
+      graph_anomaly_score: 50.0, is_anomaly: false, degree: 1,
+      top_neighbours: ["user:cust_5562"] },
+    { entity: "ip:81.171.12.23", entity_type: "ip", entity_id: "81.171.12.23",
+      graph_anomaly_score: 50.0, is_anomaly: false, degree: 1,
+      top_neighbours: ["user:cust_8000"] },
+  ],
+};

@@ -20,6 +20,7 @@ import { useOverviewData } from "../hooks/useOverviewData";
 import { useAttackSimulation } from "../hooks/useAttackSimulation";
 import { generateThreatNetworkMock } from "../data/threatNetworkMock";
 import { getThreats } from "../services/threatService";
+import { getGraphRisk } from "../services/graphRiskService";
 import { formatNumber, formatRiskScore } from "../utils/format";
 
 function DeltaTag({ value }) {
@@ -54,6 +55,31 @@ export default function Overview() {
     });
     return () => { mounted = false; };
   }, [sim.isDetected]);
+
+  // Live Entity Relationship Graph -- GNN Graph Autoencoder over real
+  // IP<->user connectivity (see /entity-risk/graph, gnn_inference.py).
+  // Deliberately a SEPARATE panel + separate ThreatNetwork instance from
+  // the scripted "Cyber Threat Network" demo above: that one is wired to
+  // the Simulate Attack button via hardcoded node/edge ids in
+  // attackScenarios.js, which wouldn't line up with real entity ids --
+  // swapping its data source would silently break the simulate button.
+  const [graphRisk, setGraphRisk] = useState({
+    available: true, nodes: [], edges: [], reason: null, source: "mock", loading: true,
+  });
+  const loadGraphRisk = () => {
+    setGraphRisk((g) => ({ ...g, loading: true }));
+    getGraphRisk({ top_n: 20 }).then((res) => {
+      setGraphRisk({
+        available: res.data.available,
+        nodes: res.data.nodes,
+        edges: res.data.edges,
+        reason: res.data.reason,
+        source: res.source,
+        loading: false,
+      });
+    });
+  };
+  useEffect(() => { loadGraphRisk(); }, []);
 
   const [injectedFeedItems, setInjectedFeedItems] = useState([]);
   const [threatBoost, setThreatBoost] = useState({ active: 0, critical: 0 });
@@ -155,7 +181,10 @@ export default function Overview() {
       </GlassPanel>
 
       {/* Cyber Threat Network + Attack Simulation — kept as its own section,
-          this app's signature differentiator beyond the reference designs */}
+          this app's signature differentiator beyond the reference designs.
+          Scripted five-layer demo topology (threatNetworkMock.js) wired to
+          the Simulate Attack button -- deliberately NOT the live GNN graph,
+          see the Live Entity Relationship Graph panel below for that. */}
       <GlassPanel className="mt-5 overflow-hidden">
         <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -178,6 +207,45 @@ export default function Overview() {
           attackEdgeIds={sim.attackEdgeIds}
           cameraPulse={sim.cameraPulse}
         />
+      </GlassPanel>
+
+      {/* Live Entity Relationship Graph — the real GNN Graph Autoencoder
+          output (build_entity_graph.py / train_gnn_local.py /
+          gnn_inference.py): actual IP<->user co-occurrence from db.logs,
+          scored for structurally-unusual connectivity. Solid-color nodes
+          are entities the model itself ranked; dimmer "context" nodes are
+          shown only so a flagged entity's real neighbours are visible. */}
+      <GlassPanel className="mt-5 overflow-hidden">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-display text-[14px] font-semibold text-navy-50">Live Entity Relationship Graph</h2>
+            <span className="font-mono text-[10px] uppercase tracking-wider text-navy-400">
+              GNN Graph Autoencoder · real IP ↔ user connectivity
+              {graphRisk.available && graphRisk.nodes.length > 0 && !graphRisk.loading
+                ? ` · ${graphRisk.nodes.length} entities shown`
+                : ""}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <StatusBadge level={graphRisk.source === "live" ? "live" : "mock"}>
+              {graphRisk.source === "live" ? "LIVE" : "MOCK DATA"}
+            </StatusBadge>
+            <button onClick={loadGraphRisk} className="flex items-center gap-1.5 rounded-lg border border-white/[0.06] bg-navy-800/60 px-3 py-1.5 text-[12px] text-navy-100 hover:border-command-cyan/30">
+              <RefreshCw className={`h-3.5 w-3.5 ${graphRisk.loading ? "animate-spin" : ""}`} />
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        <AsyncState
+          loading={graphRisk.loading}
+          error={null}
+          isEmpty={!graphRisk.loading && (!graphRisk.available || graphRisk.nodes.length === 0)}
+          onRetry={loadGraphRisk}
+          emptyLabel={graphRisk.reason || "Not enough logged activity yet for a meaningful graph."}
+        >
+          <ThreatNetwork nodes={graphRisk.nodes} edges={graphRisk.edges} height={480} />
+        </AsyncState>
       </GlassPanel>
     </div>
   );
